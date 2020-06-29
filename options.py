@@ -18,6 +18,8 @@ def get_dates_to_sell(ticker, strike, option_type):
     days_till_exps = []
     dates_to_sell = []
 
+    date_price_dict = dict()
+
     print('Getting ' + option_type + ' data...')
     for date in dates:
         chain = options.get_options_chain(ticker, date)
@@ -29,7 +31,8 @@ def get_dates_to_sell(ticker, strike, option_type):
         bid = float(row_idx['Bid'])
         ask = float(row_idx['Ask'])
         mark = (bid + ask) / 2
-        
+        date_price_dict[date] = [bid, ask, mark]
+
         dates_to_sell.append(date)
         date = datetime.strptime(date, '%B %d, %Y')
         days_till_exp = (date - datetime.now()).days
@@ -38,6 +41,7 @@ def get_dates_to_sell(ticker, strike, option_type):
         asks.append(ask)
         marks.append(mark)
         days_till_exps.append(days_till_exp)
+
 
     bids = np.array(bids)
     asks = np.array(asks)
@@ -55,10 +59,6 @@ def get_dates_to_sell(ticker, strike, option_type):
     ask_sorted_idxs = np.argsort(ask_ratios)[::-1]
     mark_sorted_idxs = np.argsort(mark_ratios)[::-1]
 
-    bids_sorted = bids[bid_sorted_idxs]
-    asks_sorted = asks[ask_sorted_idxs]
-    marks_sorted = marks[mark_sorted_idxs]
-
     bid_ratios = bid_ratios[bid_sorted_idxs]
     dates_to_sell_bid = dates_to_sell[bid_sorted_idxs]
 
@@ -70,17 +70,17 @@ def get_dates_to_sell(ticker, strike, option_type):
  
     print('Using Bid price point \n')
     for i, best_date in enumerate(dates_to_sell_bid):
-        print(best_date + ' -- Bid = ' +str(bids_sorted[i]) + ', Ask = ' + str(asks_sorted[i]) + '    Ratio = ' + str(np.round(bid_ratios[i],5)))
+        print(best_date + ' -- Bid = ' +str(date_price_dict[best_date][0]) + ', Ask = ' + str(date_price_dict[best_date][1]) + '    Ratio = ' + str(np.round(bid_ratios[i],5)))
     print('\n\n')
 
     print('Using Ask price point \n')
     for i, best_date in enumerate(dates_to_sell_ask):
-        print(best_date + ' -- Bid = ' +str(bids_sorted[i]) + ', Ask = ' + str(asks_sorted[i]) + '    Ratio = ' + str(np.round(ask_ratios[i],5)))
+        print(best_date + ' -- Bid = ' +str(date_price_dict[best_date][0]) + ', Ask = ' + str(date_price_dict[best_date][1]) + '    Ratio = ' + str(np.round(ask_ratios[i],5)))
     print('\n\n')
 
     print('Using Mark price point \n')
     for i, best_date in enumerate(dates_to_sell_mark):
-        print(best_date + ' -- Bid = ' +str(bids_sorted[i]) + ', Ask = ' + str(asks_sorted[i]) + '    Ratio = ' + str(np.round(mark_ratios[i],5)))
+        print(best_date + ' -- Bid = ' +str(date_price_dict[best_date][0]) + ', Ask = ' + str(date_price_dict[best_date][1]) + '    Ratio = ' + str(np.round(mark_ratios[i],5)))
     print('\n\n')
 
 
