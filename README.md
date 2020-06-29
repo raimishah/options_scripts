@@ -1,6 +1,6 @@
 ﻿# options scripts for idiots
 
-
-best_sell_price.py:
-  Used for calculation best return for selling options given a strike. Gives best return for bid/ask/mark. 
-  Use : raimi> python best_sell_price.py TSLA 500 p.
+#1
+  best_sell_price.py:
+    Used for calculation best return for selling options given a strike. Gives best return for bid/ask/mark. 
+    Use : raimi> python best_sell_price.py TSLA 500 p.
