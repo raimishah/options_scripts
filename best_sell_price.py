@@ -3,6 +3,7 @@ import pandas as pd
 from yahoo_fin import options 
 from datetime import datetime
 import argparse
+from prettytable import PrettyTable
 
 
 
@@ -68,21 +69,25 @@ def get_dates_to_sell(ticker, strike, option_type):
     mark_ratios = mark_ratios[mark_sorted_idxs]
     dates_to_sell_mark = dates_to_sell[mark_sorted_idxs]
  
-    print('Using Bid price point \n')
+    print('Sorted by bid price point')
+    t = PrettyTable(['Dates by Bid', 'Bid', 'Ask', 'Mark', '$ per day'])
     for i, best_date in enumerate(dates_to_sell_bid):
-        print(best_date + ' -- Bid = ' +str(date_price_dict[best_date][0]) + ', Ask = ' + str(date_price_dict[best_date][1]) + '    Ratio = ' + str(np.round(bid_ratios[i],5)))
-    print('\n\n')
+        t.add_row([best_date, date_price_dict[best_date][0], date_price_dict[best_date][1], np.round(date_price_dict[best_date][2],3), 100*np.round(bid_ratios[i],5)])
+    print(t)    
+    print('\n')
 
-    print('Using Ask price point \n')
+    print('Sorted by ask price point')
+    t = PrettyTable(['Dates by Ask', 'Bid', 'Ask', 'Mark', '$ per day'])
     for i, best_date in enumerate(dates_to_sell_ask):
-        print(best_date + ' -- Bid = ' +str(date_price_dict[best_date][0]) + ', Ask = ' + str(date_price_dict[best_date][1]) + '    Ratio = ' + str(np.round(ask_ratios[i],5)))
-    print('\n\n')
+        t.add_row([best_date, date_price_dict[best_date][0], date_price_dict[best_date][1], np.round(date_price_dict[best_date][2],3), 100*np.round(ask_ratios[i],5)])
+    print(t)    
+    print('\n')
 
-    print('Using Mark price point \n')
+    print('Sorted by mark price point')
+    t = PrettyTable(['Dates by Mark', 'Bid', 'Ask', 'Mark', '$ per day'])
     for i, best_date in enumerate(dates_to_sell_mark):
-        print(best_date + ' -- Bid = ' +str(date_price_dict[best_date][0]) + ', Ask = ' + str(date_price_dict[best_date][1]) + '    Ratio = ' + str(np.round(mark_ratios[i],5)))
-    print('\n\n')
-
+        t.add_row([best_date, date_price_dict[best_date][0], date_price_dict[best_date][1], np.round(date_price_dict[best_date][2],3), 100*np.round(mark_ratios[i],5)])
+    print(t)    
 
 
 def main():
