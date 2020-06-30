@@ -72,21 +72,21 @@ def get_dates_to_sell(ticker, strike, option_type):
     print('Sorted by bid price point')
     t = PrettyTable(['Dates by Bid', 'Bid', 'Ask', 'Mark', '$ per day'])
     for i, best_date in enumerate(dates_to_sell_bid):
-        t.add_row([best_date, date_price_dict[best_date][0], date_price_dict[best_date][1], np.round(date_price_dict[best_date][2],3), 100*np.round(bid_ratios[i],5)])
+        t.add_row([best_date, np.round(date_price_dict[best_date][0], 2), np.round(date_price_dict[best_date][1], 2), np.round(date_price_dict[best_date][2], 2), np.round(100*bid_ratios[i],3)])
     print(t)    
     print('\n')
 
     print('Sorted by ask price point')
     t = PrettyTable(['Dates by Ask', 'Bid', 'Ask', 'Mark', '$ per day'])
     for i, best_date in enumerate(dates_to_sell_ask):
-        t.add_row([best_date, date_price_dict[best_date][0], date_price_dict[best_date][1], np.round(date_price_dict[best_date][2],3), 100*np.round(ask_ratios[i],5)])
+        t.add_row([best_date, np.round(date_price_dict[best_date][0], 2), np.round(date_price_dict[best_date][1], 2), np.round(date_price_dict[best_date][2], 2), np.round(100*ask_ratios[i], 3)])
     print(t)    
     print('\n')
 
     print('Sorted by mark price point')
     t = PrettyTable(['Dates by Mark', 'Bid', 'Ask', 'Mark', '$ per day'])
     for i, best_date in enumerate(dates_to_sell_mark):
-        t.add_row([best_date, date_price_dict[best_date][0], date_price_dict[best_date][1], np.round(date_price_dict[best_date][2],3), 100*np.round(mark_ratios[i],5)])
+        t.add_row([best_date, np.round(date_price_dict[best_date][0], 2), np.round(date_price_dict[best_date][1], 2), np.round(date_price_dict[best_date][2], 2), np.round(100*mark_ratios[i], 3)])
     print(t)    
 
 
