@@ -1,4 +1,4 @@
-﻿# options scripts for idiots
+﻿# options scripts for so called traders
 
 #1
   best_date_single.py:
