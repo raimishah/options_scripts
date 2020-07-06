@@ -8,8 +8,16 @@ from prettytable import PrettyTable
 
 
 
-def get_dates_to_sell(ticker, strike, option_type):
-    strike = float(strike)
+def get_dates_to_sell(ticker, strike1, strike2):
+
+    if strike1[-1] == 'p' or strike1[-1] == 'c':
+        strike1 = strike1[:-1]
+    if strike2[-1] == 'p' or strike2[-1] == 'c':
+        strike2 = strike2[:-1]
+    
+
+    put_strike = float(strike1)
+    call_strike = float(strike2)
 
     dates = options.get_expiration_dates(ticker)
 
@@ -21,18 +29,26 @@ def get_dates_to_sell(ticker, strike, option_type):
 
     date_price_dict = dict()
 
-    option_sign = 'P' if option_type == 'puts' else 'C'
-
-    print('\nGetting data for $' + ticker.capitalize() + ' ' + str(strike) + option_sign + ' ...')
+    print('\nGetting strangle data for $' + ticker.capitalize() + ' ' + str(put_strike) + 'P ' + str(call_strike) + 'C ...')
     for date in dates:
         chain = options.get_options_chain(ticker, date)
-        df = chain[option_type]
-        row_idx = df.loc[df['Strike'] == strike]
-        if row_idx.empty:
+        df_puts = chain['puts']
+        df_calls = chain['calls']
+
+        put_row_idx = df_puts.loc[df_puts['Strike'] == put_strike]
+        if put_row_idx.empty:
             continue
 
-        bid = float(row_idx['Bid'])
-        ask = float(row_idx['Ask'])
+        call_row_idx = df_calls.loc[df_calls['Strike'] == call_strike]
+        if call_row_idx.empty:
+            continue
+
+        put_bid, put_ask = float(put_row_idx['Bid']), float(put_row_idx['Ask'])
+        call_bid, call_ask = float(call_row_idx['Bid']), float(call_row_idx['Ask'])
+
+        bid = put_bid + call_bid
+        ask = put_ask + call_ask
+
         mark = (bid + ask) / 2
         date_price_dict[date] = [bid, ask, mark]
 
@@ -92,30 +108,33 @@ def get_dates_to_sell(ticker, strike, option_type):
     print(t)    
 
 
+
+
+
+
 def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('ticker')
-    parser.add_argument('strike')
-    parser.add_argument('option_type')
+    parser.add_argument('strike1')
+    parser.add_argument('strike2')
     
     try:
         args = parser.parse_args()
     except:
-        print('Use: >>> python best_date_single.py "ticker" "strike" "c/p"')
-        print('Use: >>> python best_date_single.py TSLA 500 p')
+        print('Use: >>> python best_date_strangle.py "ticker" "strike1" "strike2"')
+        print('Use: >>> python best_date_strangle.py TSLA 800 1200')
         quit()
 
-    if 'c' in args.option_type:
-        option_type = 'calls'
-    elif 'p' in args.option_type:
-        option_type = 'puts'
-    else:
-        print('Use: >>> python best_date_single.py "ticker" "strike" "c/p"')
-        print('Use: >>> python best_date_single.py TSLA 500 p')
-        quit()
+
+    strike1 = args.strike1
+    strike2 = args.strike2
+
+    #put strike < call strike for strangle
+    if strike1 > strike2:
+        strike1, strike2 = strike2, strike1
     
-    get_dates_to_sell(args.ticker, args.strike, option_type)
+    get_dates_to_sell(args.ticker, strike1, strike2)
 
 
 
